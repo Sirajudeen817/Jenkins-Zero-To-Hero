@@ -1,21 +1,13 @@
-# -------- Build Stage --------
-FROM maven:3.8.6-openjdk-17 AS build
+# You can change this base image to anything else
+# But make sure to use the correct version of Java
+FROM eclipse-temurin:17-jre-alpine
 
-WORKDIR /build
-
-# Copy project files
-COPY . .
-
-# Build the application
-RUN mvn clean package -DskipTests
-
-# -------- Runtime Stage --------
-FROM openjdk:17-jdk-slim
+# Simply the artifact path
+ARG artifact=target/spring-boot-web.jar
 
 WORKDIR /opt/app
 
-# Copy the built JAR from the previous stage
-COPY --from=build /build/target/spring-boot-web.jar app.jar
+COPY ${artifact} app.jar
 
-# Run the app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# This should not be changed
+ENTRYPOINT ["java","-jar","app.jar"]
